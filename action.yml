@@ -18,7 +18,7 @@ runs:
     - name: Awesome github script action
       id: deep-thought
       if: ${{ github.event_name == 'issues' }}
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         script: |
           const whoToGreet = core.getInput('who-to-greet')
