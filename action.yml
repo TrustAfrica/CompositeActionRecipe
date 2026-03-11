@@ -3,30 +3,33 @@ description: 'Greets the user and returns 42.'
 
 inputs:
   who-to-greet:
-      description: 'Who to greet'
-      required: true
-      default: 'World'
+    description: 'Who to greet'
+    required: true
+    default: 'World'
 
 outputs:
-   answer: 
-      description: "Answer to life, the universe, and everything"
-      value: ${{ steps.deep-thought.outputs.answer }}
+  answer:
+    description: "Answer to life, the universe, and everything"
+    value: ${{ steps.deep-thought.outputs.answer }}
 
 runs:
   using: "composite"
   steps:
     - name: Awesome github script action
+      id: deep-thought
+      if: ${{ github.event_name == 'issues' }}
       uses: actions/github-script@v6
       with:
         script: |
-           var whoToGreet = core.getInput('who-to-greet')
-           core.notice(`Hello ${whoToGreet}`)
-           core.setOutput('answer', 42)
-           if (context.eventName === 'issues') {
-            github.rest.issues.createComment ({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '👋 Thanks for reporting!'
-            })
-           }
+          const whoToGreet = core.getInput('who-to-greet')
+
+          core.notice(`Hello ${whoToGreet}`)
+
+          await github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '👋 Thanks for reporting!'
+          })
+
+          core.setOutput('answer', 42)
